@@ -1,11 +1,10 @@
-
 const express = require("express");
 const AdminRoute = express.Router();
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const userSchema = require("../Schema/users");
+const userscema = require("../Scema/users");
 const { default: mongoose } = require("mongoose");
-const User = new mongoose.model("User", userSchema);
+const User = new mongoose.model("User", userscema);
 
 
 
