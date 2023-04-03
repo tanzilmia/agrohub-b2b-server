@@ -3,15 +3,15 @@ const Auth = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const userscema = require("../Scema/users");
+const userSchema = require("../Schema/users");
 const { default: mongoose } = require("mongoose");
-const User = new mongoose.model("User", userscema);
+const User = new mongoose.model("User", userSchema);
 
 // middleware
 
 Auth.use(express.json());
 
-// defining registe
+// defining register
 
 Auth.post("/register", async (req, res) => {
   try {
