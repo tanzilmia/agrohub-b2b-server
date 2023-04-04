@@ -16,7 +16,6 @@ app.use(express.json());
 // check .env file for databes user and password and give a Name
 const mongoUrl = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.nz3kcdw.mongodb.net/Agrohub?retryWrites=true&w=majority`;
 // conncet with mongodb
-console.log(mongoUrl);
 mongoose
   .connect(mongoUrl, {
     useNewUrlParser: true,
