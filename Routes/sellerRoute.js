@@ -92,7 +92,9 @@ SellerRoute.post("/product", verifyToken, async (req, res) => {
         });
       }
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = SellerRoute;
