@@ -11,8 +11,17 @@ const User = new mongoose.model("User", userscema);
 
 Auth.use(express.json());
 
-// defining registe
+// google auth data received
+Auth.post("/google",(req, res) => {
+  try {
+    const GoogleData = req.body;
+    console.log(GoogleData)
+  } catch (error) {
+    res.send({ message: error.message, success: false });
+  }
+});
 
+// google auth data end
 Auth.post("/register", async (req, res) => {
   try {
     const userinfos = req.body;

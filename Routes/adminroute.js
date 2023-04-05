@@ -1,4 +1,3 @@
-
 const express = require("express");
 const AdminRoute = express.Router();
 const jwt = require("jsonwebtoken");
