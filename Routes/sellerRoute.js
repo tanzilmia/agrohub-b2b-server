@@ -39,20 +39,24 @@ SellerRoute.get("/selleingProduct", (req, res) => {});
 
 // post a product
 SellerRoute.post("/product", verifyToken, async (req, res) => {
-  const newProduct = new SellerProduct(req.body);
-
-  await newProduct
-    .save()
-    .then(() => {
-      res.status(200).json({
-        message: "SELLER PRODUCT INSERTED SUCCESSFULLY",
+  try {
+    const alreadyExists = await SellerProduct.findOne({ name: req.body.name });
+    if (alreadyExists) {
+      res.json({
+        message: "PRODUCT ALREADY EXIST IN DATABASE",
       });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        error: "THIS WAS A SERVER SIDE ERROR",
-      });
-    });
+    } else {
+      const newProduct = new SellerProduct(req.body);
+      await newProduct.save();
+      if (newProduct) {
+        res.status(200).json(newProduct);
+      } else {
+        res.status(500).json({
+          error: "THIS WAS A SERVER SIDE ERROR",
+        });
+      }
+    }
+  } catch (error) {}
 });
 
 module.exports = SellerRoute;
