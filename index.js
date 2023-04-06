@@ -28,11 +28,12 @@ mongoose
   .catch((e) => console.log(e));
 
 // all Routes
-
+const product = require("./Routes/productRouter")
 app.use("/auth", auth);
 app.use("/admin", admin);
 app.use("/seller", seller);
 app.use("/common", common);
+app.use("/products", product);
 
 app.listen(port, () => {
   console.log(` Website on port ${port}`);
