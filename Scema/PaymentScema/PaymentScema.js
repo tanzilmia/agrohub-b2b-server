@@ -12,6 +12,8 @@ const paymentScema = mongoose.Schema({
     postCode: Number,
     currency: String,
     cvv: Number,
+    transactionId: Number,
+    paid: Boolean
 });
 
 module.exports = paymentScema;

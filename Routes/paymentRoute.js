@@ -5,6 +5,7 @@ const SSLCommerzPayment = require('sslcommerz-lts')
 require("dotenv").config();
 const paymentData = require("../Scema/PaymentScema/PaymentScema");
 const { default: mongoose } = require("mongoose");
+const { ObjectId } = require("bson");
 const Payment = new mongoose.model("Payment", paymentData);
 
 PaymentRoute.use(express.json());
@@ -15,21 +16,39 @@ const is_live = false //true for live, false for sandbox
 
 
 // test route
-PaymentRoute.get("/", (req, res) => {
-    res.send("PaymentRoute");
+PaymentRoute.get("/", async (req, res) => {
+    try {
+        const data = await Payment.find({})
+        res.status(200).json({
+            result: data,
+            message: "success"
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            message: "server error"
+        })
+    }
+    // res.send("Payment");
+    // console.log(Payment);
 });
 
 
 // post a product
 PaymentRoute.post("/", async (req, res) => {
     const newPaymentData = new Payment(req.body);
+    // const transactionId = 12981931031;
+    // const price = 340;
+    // req.body=transactionId
+    // req.body = price;
+    // console.log(newPaymentData);
     const data = {
         total_amount: newPaymentData.cvv,
         currency: newPaymentData.currency,
-        tran_id: 'REF123', // use unique tran_id for each api call
-        success_url: 'http://localhost:3030/success',
-        fail_url: 'http://localhost:3030/fail',
-        cancel_url: 'http://localhost:3030/cancel',
+        tran_id: newPaymentData.transactionId, // use unique tran_id for each api call
+        success_url: `http://localhost:5000/payment-gateway/payment/success?transactionId=${newPaymentData?.transactionId}`,
+        fail_url: `http://localhost:5000/payment-gateway/payment/fail?transactionId=${newPaymentData?.transactionId}`,
+        cancel_url: 'http://localhost:5000/payment/cancel',
         ipn_url: 'http://localhost:3030/ipn',
         shipping_method: 'Courier',
         product_name: newPaymentData.productName,
@@ -58,9 +77,39 @@ PaymentRoute.post("/", async (req, res) => {
         // Redirect the user to payment gateway
         let GatewayPageURL = apiResponse.GatewayPageURL
         // console.log(apiResponse);
-        res.send({ url: GatewayPageURL })
+        newPaymentData.save();
+        res.json({ url: GatewayPageURL })
     });
 })
 
+PaymentRoute.post('/payment/success', async (req, res) => {
+    const { transactionId } = req.query;
+    await Payment.updateOne({ transactionId: transactionId }, { $set: { paid: true, paidAt: new Date() } })
+    // console.log(transactionId);
+    res.redirect(`http://localhost:3000/payment-gateway/payment/success?transactionId=${transactionId}`)
+})
+PaymentRoute.post('/payment/fail', async (req, res) => {
+    const { transactionId } = req.query;
+    await Payment.deleteOne({ transactionId: transactionId })
+    // console.log(transactionId);
+    res.redirect(`http://localhost:3000/payment-gateway/payment/fail?transactionId=${transactionId}`)
+})
+
+
+PaymentRoute.get("/orders-by-transaction-id/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await Payment.findOne({ transactionId: id })
+        res.status(200).json({
+            result: data,
+            message: "success"
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            message: "server error"
+        })
+    }
+});
 
 module.exports = PaymentRoute;
