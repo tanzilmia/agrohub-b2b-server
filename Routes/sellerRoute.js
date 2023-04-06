@@ -35,7 +35,7 @@ SellerRoute.get("/", (req, res) => {
 });
 
 // get limit 4 product
-SellerRoute.get("/limitProduct", async (req, res) => {
+SellerRoute.get("/limit_Product", async (req, res) => {
   try {
     const data = await SellerProduct.find({}).limit(4).lean();
     res.send(data);
@@ -48,7 +48,7 @@ SellerRoute.get("/limitProduct", async (req, res) => {
 });
 
 // get all product
-SellerRoute.get("/allProduct", async (req, res) => {
+SellerRoute.get("/all_Product", async (req, res) => {
   try {
     const data = await SellerProduct.find({}).lean();
     res.send(data);
@@ -61,7 +61,7 @@ SellerRoute.get("/allProduct", async (req, res) => {
 });
 
 // get one id product
-SellerRoute.get("/allProduct/:id", async (req, res) => {
+SellerRoute.get("/all_Product/:id", async (req, res) => {
   try {
     const data = await SellerProduct.findById(req.params.id).lean();
     res.send(data);
