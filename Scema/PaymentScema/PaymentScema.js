@@ -11,7 +11,7 @@ const paymentScema = mongoose.Schema({
     country: String,
     postCode: Number,
     currency: String,
-    cvv: Number,
+    price: Number,
     transactionId: Number,
     paid: Boolean
 });

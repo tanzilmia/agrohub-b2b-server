@@ -5,7 +5,6 @@ const SSLCommerzPayment = require('sslcommerz-lts')
 require("dotenv").config();
 const paymentData = require("../Scema/PaymentScema/PaymentScema");
 const { default: mongoose } = require("mongoose");
-const { ObjectId } = require("bson");
 const Payment = new mongoose.model("Payment", paymentData);
 
 PaymentRoute.use(express.json());
@@ -37,13 +36,9 @@ PaymentRoute.get("/", async (req, res) => {
 // post a product
 PaymentRoute.post("/", async (req, res) => {
     const newPaymentData = new Payment(req.body);
-    // const transactionId = 12981931031;
-    // const price = 340;
-    // req.body=transactionId
-    // req.body = price;
-    // console.log(newPaymentData);
+
     const data = {
-        total_amount: newPaymentData.cvv,
+        total_amount: newPaymentData.price,
         currency: newPaymentData.currency,
         tran_id: newPaymentData.transactionId, // use unique tran_id for each api call
         success_url: `http://localhost:5000/payment-gateway/payment/success?transactionId=${newPaymentData?.transactionId}`,
@@ -109,6 +104,18 @@ PaymentRoute.get("/orders-by-transaction-id/:id", async (req, res) => {
         res.status(500).json({
             message: "server error"
         })
+    }
+});
+
+PaymentRoute.get("/all_Product/:id", async (req, res) => {
+    try {
+        const data = await SellerProduct.findById(req.params.id).lean();
+        res.send(data);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: "An error occurred while retrieving the product",
+        });
     }
 });
 
