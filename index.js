@@ -7,6 +7,7 @@ const auth = require("./Routes/authentication");
 const admin = require("./Routes/adminroute");
 const seller = require("./Routes/sellerRoute");
 const common = require("./Routes/commonRoute");
+const payment = require("./Routes/paymentRoute")
 require("dotenv").config();
 
 // middleware
@@ -15,6 +16,8 @@ app.use(express.json());
 
 // check .env file for databes user and password and give a Name
 const mongoUrl = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.nz3kcdw.mongodb.net/Agrohub?retryWrites=true&w=majority`;
+  // const mongoUrl = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.9wccxu2.mongodb.net/geniusCar?retryWrites=true&w=majority`;
+
 // conncet with mongodb
 mongoose
   .connect(mongoUrl, {
@@ -32,6 +35,7 @@ app.use("/auth", auth);
 app.use("/admin", admin);
 app.use("/seller", seller);
 app.use("/common", common);
+app.use("/payment-gateway", payment);
 
 app.listen(port, () => {
   console.log(` Website on port ${port}`);
