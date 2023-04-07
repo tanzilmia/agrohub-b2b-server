@@ -81,13 +81,13 @@ PaymentRoute.post('/payment/success', async (req, res) => {
     const { transactionId } = req.query;
     await Payment.updateOne({ transactionId: transactionId }, { $set: { paid: true, paidAt: new Date() } })
     // console.log(transactionId);
-    res.redirect(`http://localhost:3000/payment-gateway/payment/success?transactionId=${transactionId}`)
+    res.redirect(`https://agrohubb2b.netlify.app/payment-gateway/payment/success?transactionId=${transactionId}`)
 })
 PaymentRoute.post('/payment/fail', async (req, res) => {
     const { transactionId } = req.query;
     await Payment.deleteOne({ transactionId: transactionId })
     // console.log(transactionId);
-    res.redirect(`http://localhost:3000/payment-gateway/payment/fail?transactionId=${transactionId}`)
+    res.redirect(`https://agrohubb2b.netlify.app/payment-gateway/payment/fail?transactionId=${transactionId}`)
 })
 
 
