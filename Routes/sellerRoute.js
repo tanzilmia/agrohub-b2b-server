@@ -34,8 +34,44 @@ SellerRoute.get("/", (req, res) => {
   res.send("SellerRoute");
 });
 
-// get a product
-SellerRoute.get("/selleingProduct", (req, res) => {});
+// get limit 4 product
+SellerRoute.get("/limit_Product", async (req, res) => {
+  try {
+    const data = await SellerProduct.find({}).limit(4).lean();
+    res.send(data);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error: "An error occurred while retrieving the products",
+    });
+  }
+});
+
+// get all product
+SellerRoute.get("/all_Product", async (req, res) => {
+  try {
+    const data = await SellerProduct.find({}).lean();
+    res.send(data);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error: "An error occurred while retrieving the products",
+    });
+  }
+});
+
+// get one id product
+SellerRoute.get("/all_Product/:id", async (req, res) => {
+  try {
+    const data = await SellerProduct.findById(req.params.id).lean();
+    res.send(data);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error: "An error occurred while retrieving the product",
+    });
+  }
+});
 
 // post a product
 SellerRoute.post("/product", verifyToken, async (req, res) => {
@@ -56,7 +92,9 @@ SellerRoute.post("/product", verifyToken, async (req, res) => {
         });
       }
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = SellerRoute;
