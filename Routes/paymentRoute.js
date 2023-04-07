@@ -41,9 +41,9 @@ PaymentRoute.post("/", async (req, res) => {
         total_amount: newPaymentData.price,
         currency: newPaymentData.currency,
         tran_id: newPaymentData.transactionId, // use unique tran_id for each api call
-        success_url: `http://localhost:5000/payment-gateway/payment/success?transactionId=${newPaymentData?.transactionId}`,
-        fail_url: `http://localhost:5000/payment-gateway/payment/fail?transactionId=${newPaymentData?.transactionId}`,
-        cancel_url: 'http://localhost:5000/payment/cancel',
+        success_url: `https://agrohub-b2b-backend.vercel.app/payment-gateway/payment/success?transactionId=${newPaymentData?.transactionId}`,
+        fail_url: `https://agrohub-b2b-backend.vercel.app/payment-gateway/payment/fail?transactionId=${newPaymentData?.transactionId}`,
+        cancel_url: 'https://agrohub-b2b-backend.vercel.app/payment/cancel',
         ipn_url: 'http://localhost:3030/ipn',
         shipping_method: 'Courier',
         product_name: newPaymentData.productName,
