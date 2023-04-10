@@ -7,6 +7,7 @@ const { default: mongoose } = require("mongoose");
 const SellerProduct = new mongoose.model("SellerProduct", product);
 
 SellerRoute.use(express.json());
+
 const verifyToken = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
