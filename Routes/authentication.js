@@ -12,10 +12,11 @@ const User = new mongoose.model("User", userscema);
 Auth.use(express.json());
 
 // google auth data received
-Auth.post("/google",(req, res) => {
+Auth.post("/google", async (req, res) => {
   try {
     const GoogleData = req.body;
-    console.log(GoogleData)
+    var decodedData = await jwt.decode(GoogleData.credential);
+    console.log(decodedData.email); 
   } catch (error) {
     res.send({ message: error.message, success: false });
   }
