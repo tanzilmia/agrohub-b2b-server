@@ -1,95 +1,86 @@
 const mongoose = require("mongoose");
 const productSchema = mongoose.Schema({
-  name: {
+  sellerName: {
     type: String,
     required: [true, "Please Enter product Name"],
     trim: true,
   },
-  title: {
+  sellerEmail: {
+    type: String,
+    required: [true, "Please Enter product Name"],
+    trim: true,
+  },
+  sellerProfilePicture: {
+    type: String,
+    required: [true, "Please Enter product Name"],
+    trim: true,
+  },
+  name: {
     type: String,
   },
+
   description: {
     type: String,
     required: [true, "Please Enter product Description"],
   },
-  price: {
+
+  oldPrice: {
     type: Number,
     required: [true, "Please Enter product Price"],
     maxLength: [8, "price cannot exceed 8 characters"],
   },
-  oldPrice: {
+  newPrice: {
     type: Number,
+    required: [true, "Please Enter product Price"],
     maxLength: [8, "price cannot exceed 8 characters"],
   },
-  brand: {
+  size: {
+    type: Array,
+    required: [true, "Please Enter product Price"],
+  },
+  stock: {
+    type: String,
+    required: [true, "Please Enter product Price"],
+  },
+
+
+  category: {
     type: String,
     required: [true, "please Enter Your Brand Name"],
-    trim: true,
+    
   },
   size: [
     {
-      type: String,
+      type: Array,
       required: [true, "please Enter Your product size"],
     },
   ],
-  type: {
+
+  brand: {
     type:String,
+    required: [true, "please Enter Your Brand Name"],
   },
+  
   rating: {
     type: Number,
     default: 0,
   },
-  image: [
-    {
-      public_id: {
-        type: String,
-        required: true,
-      },
-      url: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
-  category: {
-    type: String,
-    required: [true, "Please Enter Product Category"],
+  image: {
+    type:Array,
+    required: [true, "please Enter Your Brand Name"],
   },
-  stock: {
-    type: Number,
-    required: [true, "Please Enter product Stock"],
-    maxLength: [4, "Stock cannot exceed 4 characters"],
-    default: 1,
+  role: {
+    type:String,
+    required: [true, "please Enter Your Brand Name"],
   },
-  numOfReviews: {
-    type: Number,
-    default: 0,
+  additionalInfo: {
+    type:Array,
+    required: [true, "please Enter Your Brand Name"],
   },
-  reviews: [
-    {
-      name: {
-        type: String,
-        required: true,
-      },
-      rating: {
-        type: Number,
-        required: true,
-      },
-      comment: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+
+
+
+
 });
 
 module.exports = mongoose.model("product", productSchema);
