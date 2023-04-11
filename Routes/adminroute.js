@@ -35,7 +35,7 @@ const verifyToken = async (req, res, next) => {
 };
 
 // post Category and brand
-AdminRoute.post("/brands", async (req, res) => {
+AdminRoute.post("/brands", verifyToken, async (req, res) => {
   try {
     const brand = req.body;
     const alreadyExist = await Brand.findOne({ brand: brand.brand, category:brand.category });
@@ -67,7 +67,7 @@ AdminRoute.get("/brands", async (req, res) => {
 
 
 
-AdminRoute.post("/categories", async (req, res) => {
+AdminRoute.post("/categories", verifyToken, async (req, res) => {
   try {
     const categorys = req.body; // Extract the "category" value from the request body
 
