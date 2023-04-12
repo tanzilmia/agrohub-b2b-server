@@ -16,7 +16,7 @@ Auth.post("/google", async (req, res) => {
   try {
     const GoogleData = req.body;
     var decodedData = await jwt.decode(GoogleData.credential);
-    console.log(decodedData.email); 
+    console.log(decodedData.email);
   } catch (error) {
     res.send({ message: error.message, success: false });
   }
