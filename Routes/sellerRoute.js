@@ -36,7 +36,7 @@ SellerRoute.get("/", (req, res) => {
 // get limit 4 product
 SellerRoute.get("/limit_Product", async (req, res) => {
   try {
-    const data = await SellerProduct.find({}).limit(4).lean();
+    const data = await SellerProduct.find({}).limit(6).lean();
     res.send(data);
   } catch (err) {
     console.log(err);
