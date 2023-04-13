@@ -8,6 +8,7 @@ const admin = require("./Routes/adminroute");
 const seller = require("./Routes/sellerRoute");
 const common = require("./Routes/commonRoute");
 const payment = require("./Routes/paymentRoute")
+const chatRoute = require("./Routes/chatRoute")
 require("dotenv").config();
 
 // middleware
@@ -37,6 +38,7 @@ app.use("/seller", seller);
 app.use("/common", common);
 app.use("/payment-gateway", payment);
 app.use("/products", product);
+app.use("/chat", chatRoute);
 
 app.listen(port, () => {
   console.log(` Website on port ${port}`);
