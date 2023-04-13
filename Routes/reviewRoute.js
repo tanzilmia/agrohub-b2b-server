@@ -68,4 +68,24 @@ ReviewRoute.post("/product_review", async (req, res) => {
   }
 });
 
+// send front end to database rating
+ReviewRoute.post("/product_rating/:id/rating", async (req, res) => {
+  const id = req.params.id;
+  const { rating } = req.body;
+  try {
+    const review = await Review.findByIdAndUpdate(
+      id,
+      { rating },
+      { new: true }
+    );
+    if (!review) {
+      return res.json({ message: "Review not found" });
+    }
+    res.json({ message: "Rating saved", review });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = ReviewRoute;
