@@ -7,8 +7,8 @@ const auth = require("./Routes/authentication");
 const admin = require("./Routes/adminroute");
 const seller = require("./Routes/sellerRoute");
 const common = require("./Routes/commonRoute");
-const payment = require("./Routes/paymentRoute")
-const chatRoute = require("./Routes/chatRoute")
+const payment = require("./Routes/paymentRoute");
+const chatRoute = require("./Routes/chatRoute");
 const review = require("./Routes/reviewRoute");
 require("dotenv").config();
 
