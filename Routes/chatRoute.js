@@ -12,22 +12,24 @@ const verifyToken = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
     if (!authorization) {
-      return res.status(403).send({ message: "UnAuthrize Access" });
+      return res.status(403).send({ message: "Unauthorized Access" });
     }
     if (authorization) {
       const token = authorization.split(" ")[1];
       const decoded = await jwt.verify(token, `${process.env.JWT_SECRET}`);
-      const { email } = decoded;
+      const { email, _id } = decoded; // Add _id to the destructured object
+      req.user = { _id }; // Set the req.user object with _id
       if (email === req.query.email) {
         next();
       } else {
-        return res.status(403).send({ message: "UnAuthrize" });
+        return res.status(403).send({ message: "Unauthorized" });
       }
     }
   } catch (err) {
-    return next("Privet Api");
+    return next("Private Api");
   }
 };
+
 
 
 ChatRoute.get("/", (req, res) => {

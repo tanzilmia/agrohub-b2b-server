@@ -59,7 +59,7 @@ Auth.post("/login", async (req, res) => {
     if (validuser) {
       if (validPass) {
         const token = jwt.sign(
-          { email: validuser.email },
+          { email: validuser.email, _id:validuser._id },
           `${process.env.JWT_SECRET}`,
           { expiresIn: "1d" }
         );
