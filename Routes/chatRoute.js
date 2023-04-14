@@ -85,8 +85,8 @@ ChatRoute.post("/accessChat", verifyToken, async (req, res) => {
       return res.send(fullChat);
     }
   } catch (error) {
-    console.error(error);
-    return res.status(500).send("Server Error");
+    console.error(error.message);
+    return res.status(500).send(error.message);
   }
 });
 
