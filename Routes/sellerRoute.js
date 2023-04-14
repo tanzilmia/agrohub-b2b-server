@@ -37,7 +37,7 @@ SellerRoute.get("/", (req, res) => {
 // get limit 4 product
 SellerRoute.get("/limit_Product", async (req, res) => {
   try {
-    const data = await SellerProduct.find({}).limit(4).lean();
+    const data = await SellerProduct.find({}).limit(6).lean();
     res.send(data);
   } catch (err) {
     console.log(err);
@@ -73,6 +73,19 @@ SellerRoute.get("/all_Product/:id", async (req, res) => {
   }
 });
 
+SellerRoute.delete("/all_Product/:id", async (req, res) => {
+  try {
+    const deletedProduct = await SellerProduct.findByIdAndDelete(req.params.id);
+    if (!deletedProduct) {
+      return res.json({ error: "Product not found" });
+    }
+    res.json({ message: "Product deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.json({ error: "An error occurred while deleting the product" });
+  }
+});
+
 // post a product
 SellerRoute.post("/product", verifyToken, async (req, res) => {
   try {
@@ -94,6 +107,26 @@ SellerRoute.post("/product", verifyToken, async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+  }
+});
+
+// find id and update rating
+SellerRoute.post("/product_rating/:id/rating", async (req, res) => {
+  const id = req.params.id;
+  const { rating } = req.body;
+  try {
+    const review = await SellerProduct.findByIdAndUpdate(
+      id,
+      { rating },
+      { new: true }
+    );
+    if (!review) {
+      return res.json({ message: "Review not found" });
+    }
+    res.json({ message: "Rating saved", review });
+  } catch (error) {
+    console.error(error);
+    res.json({ message: "Server error" });
   }
 });
 

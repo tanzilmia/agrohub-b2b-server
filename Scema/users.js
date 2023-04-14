@@ -6,6 +6,9 @@ const userScema = new mongoose.Schema({
   role: String,
   phone: String,
   profilePic: String,
+},
+{
+  timestamps:true
 });
 
 module.exports = userScema;
