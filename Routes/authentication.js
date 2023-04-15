@@ -16,13 +16,53 @@ Auth.post("/google", async (req, res) => {
   try {
     const GoogleData = req.body;
     var decodedData = await jwt.decode(GoogleData.credential);
-    console.log(decodedData.email);
+    console.log(decodedData);
+    const alreadyExist = await User.findOne({ email: decodedData.email });
+    if (alreadyExist) {
+      return res
+        .status(200)
+        .send({ success: true, message: "Login successfully" });
+    }
+    decodedData.role = "seller";
+    const user = new User({
+      name: decodedData.name,
+      email: decodedData.email,
+      role: decodedData.role,
+      phone: null,
+      profilePic: decodedData.picture,
+    });
+    await user.save();
+    res.status(200).send({
+      success: true,
+      message: "Registration successfully"
+    })
   } catch (error) {
     res.send({ message: error.message, success: false });
   }
 });
 
 // google auth data end
+// get all the google user 
+// Auth.get("/user-info", async (req, res) => {
+//   try {
+//     const { token } = req.body;
+//     const user = jwt.verify(token, process.env.JWT_SECRET);
+//     const userEmail = user.email;
+//     const userdata = await User.findOne({ email: userEmail });
+//     if (userdata) {
+//       res.status(200).send({ message: "successfull", data: userdata });
+//     } else {
+//       res.status(400).send({ message: "Not Valid User" });
+//     }
+//   } catch (e) {
+//     res.status(404).send({
+//       success: false,
+//       message: e.message
+//     })
+//   }
+// });
+
+
 Auth.post("/register", async (req, res) => {
   try {
     const userinfos = req.body;
