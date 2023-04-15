@@ -5,6 +5,9 @@ const SSLCommerzPayment = require('sslcommerz-lts')
 require("dotenv").config();
 const paymentData = require("../Scema/PaymentScema/PaymentScema");
 const { default: mongoose } = require("mongoose");
+const product = require("../Scema/SellerScema/PostSellerScema");
+const { ObjectId } = require("mongodb");
+const SellerProduct = new mongoose.model("SellerProduct", product);
 const Payment = new mongoose.model("Payment", paymentData);
 
 PaymentRoute.use(express.json());
@@ -79,10 +82,33 @@ PaymentRoute.post("/", async (req, res) => {
 
 PaymentRoute.post('/payment/success', async (req, res) => {
     const { transactionId } = req.query;
+    // console.log(id, transactionId)
+   const findProduct = await Payment.findOne({transactionId: transactionId})
+   console.log("productis",findProduct)
     await Payment.updateOne({ transactionId: transactionId }, { $set: { paid: true, paidAt: new Date() } })
     // console.log(transactionId);
+    // await SellerProduct.updateOne({_id: new ObjectId(id) }, {$set:{totalSells: 1 }})
     res.redirect(`https://agrohubb2b.netlify.app/payment-gateway/payment/success?transactionId=${transactionId}`)
 })
+
+PaymentRoute.get('/payment/success', async (req, res) => {
+    const { transactionId } = req.query;
+   const findProduct = await Payment.findOne({transactionId: transactionId})
+   if(findProduct){
+    const getProduct = await SellerProduct.updateOne({_id: findProduct?.productId}, {$inc:{totalSells: 1}})
+    res.send(getProduct)
+   }
+   const getQuantity = await SellerProduct.findOne({_id: findProduct?.productId})
+   if(getQuantity?.totalQuantity > 0){
+    res.send({message: "total quantity not goes to less 0"})
+   }
+   else{
+    const updateQuantity = await SellerProduct.updateOne({_id: findProduct?.productId}, {$inc:{totalQuantity: -1}})
+    res.send(updateQuantity)
+   }
+   console.log("productis",findProduct)
+    })
+
 PaymentRoute.post('/payment/fail', async (req, res) => {
     const { transactionId } = req.query;
     await Payment.deleteOne({ transactionId: transactionId })
