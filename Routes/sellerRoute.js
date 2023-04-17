@@ -36,7 +36,7 @@ SellerRoute.get("/", (req, res) => {
 // get limit 4 product
 SellerRoute.get("/limit_Product", async (req, res) => {
   try {
-    const data = await SellerProduct.find({}).limit(6).lean();
+    const data = await SellerProduct.find({}).limit(8).lean();
     res.send(data);
   } catch (err) {
     console.log(err);
@@ -126,6 +126,20 @@ SellerRoute.post("/product_rating/:id/rating", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.json({ message: "Server error" });
+  }
+});
+
+// find by catgegori wise product
+SellerRoute.get("/category_products", async (req, res) => {
+  try {
+    const categoryProducts = req.query.category;
+    const product = await SellerProduct.find({ category: categoryProducts })
+      .limit(1)
+      .exec();
+    res.send(product);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
   }
 });
 
