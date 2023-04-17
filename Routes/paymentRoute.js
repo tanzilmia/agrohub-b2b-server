@@ -109,6 +109,7 @@ PaymentRoute.get('/payment/success', async (req, res) => {
    console.log("productis",findProduct)
     })
 
+    
 PaymentRoute.post('/payment/fail', async (req, res) => {
     const { transactionId } = req.query;
     await Payment.deleteOne({ transactionId: transactionId })
