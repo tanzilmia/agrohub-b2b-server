@@ -3,8 +3,10 @@ const SellerRoute = express.Router();
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const product = require("../Scema/SellerScema/PostSellerScema");
+const paymentData = require("../Scema/PaymentScema/PaymentScema");
 const { default: mongoose } = require("mongoose");
 const SellerProduct = new mongoose.model("SellerProduct", product);
+const Payment = new mongoose.model("Payment", paymentData);
 
 SellerRoute.use(express.json());
 const verifyToken = async (req, res, next) => {
@@ -85,8 +87,60 @@ SellerRoute.delete("/all_Product/:id", async (req, res) => {
   }
 });
 
+//find particular seller product using email
+SellerRoute.get("/seller-product", async (req, res) => {
+  try {
+    const email = req.query.email;
+    const findProductByEmail = await SellerProduct.find({ sellerEmail: email });
+    if (findProductByEmail) {
+      res.send({ result: findProductByEmail, message: "Success" });
+    } else {
+      res.status(500).send({
+        error: "Poduct not found",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//finding buyer for particular seller
+SellerRoute.get("/my-buyer", async (req, res) => {
+  try {
+    const email = req.query.email;
+    const findProductByEmail = await SellerProduct.find({ sellerEmail: email });
+    findProductByEmail?.filter(async (product) => {
+      if (product) {
+        const findBuyer = await Payment.find({ productId: product?._id });
+        res
+          .status(200)
+          .send({ result: findBuyer, message: "Successfully Found" });
+      } else {
+        res.status(500).send({ error: "Buyer not found" });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//delete product finding by id
+SellerRoute.delete("/delete-product/:id", async (req, res) => {
+   try{
+    const id = req.params.id;
+    const deleteProduct = await SellerProduct.deleteOne({ _id: id });
+    console.log(deleteProduct)
+    res.status(200).send({result: deleteProduct, message:"Delete Successfully"})
+   }
+   catch(error){
+    console.log(error)
+   }
+  }
+);
+
+
 // post a product
-SellerRoute.post("/product", verifyToken, async (req, res) => {
+SellerRoute.post("/product", async (req, res) => {
   try {
     const alreadyExists = await SellerProduct.findOne({ name: req.body.name });
     if (alreadyExists) {
