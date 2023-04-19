@@ -16,6 +16,7 @@ Auth.post("/google", async (req, res) => {
   try {
     const GoogleData = req.body;
     var decodedData = await jwt.decode(GoogleData.credential);
+<<<<<<< HEAD
     console.log(decodedData);
     const alreadyExist = await User.findOne({ email: decodedData.email });
     if (alreadyExist) {
@@ -36,6 +37,9 @@ Auth.post("/google", async (req, res) => {
       success: true,
       message: "Registration successfully"
     })
+=======
+    console.log(decodedData.email);
+>>>>>>> master
   } catch (error) {
     res.send({ message: error.message, success: false });
   }
@@ -99,7 +103,7 @@ Auth.post("/login", async (req, res) => {
     if (validuser) {
       if (validPass) {
         const token = jwt.sign(
-          { email: validuser.email },
+          { email: validuser.email, _id:validuser._id },
           `${process.env.JWT_SECRET}`,
           { expiresIn: "1d" }
         );
@@ -127,6 +131,30 @@ Auth.post("/user-info", async (req, res) => {
       res.status(400).send({ message: "Not Valid User" });
     }
   } catch (e) {}
+});
+
+// get seller data
+Auth.get("/seller", async (req, res) => {
+  try {
+    const data = await User.find({ role: "seller" }).limit(5).lean();
+    res.send(data);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      error: "An error occurred while retrieving the products",
+    });
+  }
+});
+
+Auth.delete("/user_delete/:id", async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "review deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Error deleting review");
+  }
 });
 
 module.exports = Auth;

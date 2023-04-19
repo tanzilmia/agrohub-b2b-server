@@ -18,7 +18,6 @@ app.use(express.json());
 
 // check .env file for databes user and password and give a Name
 const mongoUrl = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.nz3kcdw.mongodb.net/Agrohub?retryWrites=true&w=majority`;
-// const mongoUrl = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.9wccxu2.mongodb.net/geniusCar?retryWrites=true&w=majority`;
 
 // conncet with mongodb
 mongoose
@@ -27,7 +26,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("connceted mongoose");
+    console.log("connected to mongoose");
   })
   .catch((e) => console.log(e));
 
@@ -42,6 +41,57 @@ app.use("/products", product);
 app.use("/chat", chatRoute);
 app.use("/review", review);
 
-app.listen(port, () => {
-  console.log(` Website on port ${port}`);
+const server = app.listen(port, () => {
+  console.log(`Website on port ${port}`);
 });
+
+const io = require("socket.io")(server, { 
+  pingTimeout: 60000,
+  cors: {
+    origin: "https://agrohubb2b.netlify.app",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("connected to socket.io");
+
+  socket.on("setup", (userData) => {
+    if (!userData?._id) {
+      // Handle error: userData or userData._id is missing
+      socket.emit("error", { message: "Invalid setup data" });
+      return;
+    }
+    socket.join(userData._id);
+    socket.emit("connected");
+  });
+
+  socket.on("join chat", (room) => {
+    if (!room) {
+      // Handle error: room is missing
+      socket.emit("error", { message: "Invalid chat room data" });
+      return;
+    }
+    socket.join(room);
+    console.log("User joined room:", room);
+  });
+
+  socket.on("new message", (newMessageRecive) => {
+    if (!newMessageRecive?.chat || !newMessageRecive?.sender?._id) {
+      // Handle error: newMessageRecive or newMessageRecive.chat or newMessageRecive.sender or newMessageRecive.sender._id is missing
+      socket.emit("error", { message: "Invalid message data" });
+      return;
+    }
+    var chat = newMessageRecive.chat;
+    if (!chat?.users) {
+      // Handle error: chat.users is missing
+      socket.emit("error", { message: "chat.users not found" });
+      return;
+    }
+    chat.users.forEach(user => {
+      if (user._id === newMessageRecive.sender._id) return;
+      socket.in(user._id).emit("message receive", newMessageRecive);
+    });
+  });
+});
+
+
