@@ -3,6 +3,7 @@ const Product = require("../Scema/productModal");
 exports.createProduct = async (req, res, next) => {
   try {
     // req.body.user = req.user.id;
+    
     const product = await Product.create(req.body);
     res.status(200).send({
       success: true,

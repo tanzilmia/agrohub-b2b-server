@@ -32,6 +32,7 @@ mongoose
 
 // all Routes
 const product = require("./Routes/productRouter");
+const CartProduct = require("./Routes/cartProductrouter") 
 app.use("/auth", auth);
 app.use("/admin", admin);
 app.use("/seller", seller);
@@ -40,7 +41,7 @@ app.use("/payment-gateway", payment);
 app.use("/products", product);
 app.use("/chat", chatRoute);
 app.use("/review", review);
-
+app.use("/CartProduct", CartProduct );
 const server = app.listen(port, () => {
   console.log(`Website on port ${port}`);
 });

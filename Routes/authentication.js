@@ -16,30 +16,7 @@ Auth.post("/google", async (req, res) => {
   try {
     const GoogleData = req.body;
     var decodedData = await jwt.decode(GoogleData.credential);
-<<<<<<< HEAD
-    console.log(decodedData);
-    const alreadyExist = await User.findOne({ email: decodedData.email });
-    if (alreadyExist) {
-      return res
-        .status(200)
-        .send({ success: true, message: "Login successfully" });
-    }
-    decodedData.role = "seller";
-    const user = new User({
-      name: decodedData.name,
-      email: decodedData.email,
-      role: decodedData.role,
-      phone: null,
-      profilePic: decodedData.picture,
-    });
-    await user.save();
-    res.status(200).send({
-      success: true,
-      message: "Registration successfully"
-    })
-=======
     console.log(decodedData.email);
->>>>>>> master
   } catch (error) {
     res.send({ message: error.message, success: false });
   }
