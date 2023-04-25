@@ -126,18 +126,17 @@ SellerRoute.get("/my-buyer", async (req, res) => {
 
 //delete product finding by id
 SellerRoute.delete("/delete-product/:id", async (req, res) => {
-   try{
+  try {
     const id = req.params.id;
     const deleteProduct = await SellerProduct.deleteOne({ _id: id });
-    console.log(deleteProduct)
-    res.status(200).send({result: deleteProduct, message:"Delete Successfully"})
-   }
-   catch(error){
-    console.log(error)
-   }
+    console.log(deleteProduct);
+    res
+      .status(200)
+      .send({ result: deleteProduct, message: "Delete Successfully" });
+  } catch (error) {
+    console.log(error);
   }
-);
-
+});
 
 // post a product
 SellerRoute.post("/product", async (req, res) => {
@@ -194,6 +193,26 @@ SellerRoute.get("/category_products", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
+  }
+});
+
+// find by name,category and brand product
+SellerRoute.get("/search", async (req, res) => {
+  try {
+    const { name, category, brand } = req.query;
+
+    const regex = new RegExp(`${name}|${category}|${brand}`, "i");
+    const findProductByName = await SellerProduct.find({
+      $or: [
+        { name: { $regex: regex } },
+        { category: { $regex: regex } },
+        { brand: { $regex: regex } },
+      ],
+    });
+    res.send(findProductByName);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
