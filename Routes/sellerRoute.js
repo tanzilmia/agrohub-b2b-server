@@ -7,6 +7,8 @@ const paymentData = require("../Scema/PaymentScema/PaymentScema");
 const { default: mongoose } = require("mongoose");
 const SellerProduct = new mongoose.model("SellerProduct", product);
 const Payment = new mongoose.model("Payment", paymentData);
+const userscema = require("../Scema/users");
+const User = new mongoose.model("User", userscema);
 
 SellerRoute.use(express.json());
 const verifyToken = async (req, res, next) => {
@@ -61,6 +63,23 @@ SellerRoute.get("/all_Product", async (req, res) => {
   }
 });
 
+
+SellerRoute.get("/recent_Product", async (req, res) => {
+  try {
+    const data = await SellerProduct.find({})
+      .sort({createdAt: -1})
+      .limit(5)
+      .lean();
+    res.send(data);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error: "An error occurred while retrieving the products",
+    });
+  }
+});
+
+
 // get one id product
 SellerRoute.get("/all_Product/:id", async (req, res) => {
   try {
@@ -74,18 +93,35 @@ SellerRoute.get("/all_Product/:id", async (req, res) => {
   }
 });
 
-SellerRoute.delete("/all_Product/:id", async (req, res) => {
+SellerRoute.delete("/delete-product", async (req, res) => {
   try {
-    const deletedProduct = await SellerProduct.findByIdAndDelete(req.params.id);
+    const deletedProduct = await SellerProduct.findByIdAndDelete(req.query.id);
     if (!deletedProduct) {
-      return res.json({ error: "Product not found" });
+      return res.send({ error: "Product not found" });
     }
-    res.json({ message: "Product deleted successfully" });
+    res.send({ message: "Product deleted successfully" });
   } catch (err) {
     console.error(err);
-    res.json({ error: "An error occurred while deleting the product" });
+    res.send({ error: "An error occurred while deleting the product" });
   }
 });
+
+
+SellerRoute.delete("/delete-user", async (req, res) => {
+  try {
+    const deletedProduct = await User.findByIdAndDelete(req.query.id);
+    if (!deletedProduct) {
+      return res.send({ error: "Product not found" });
+    }
+    res.send({ message: "Product deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.send({ error: "An error occurred while deleting the product" });
+  }
+});
+
+
+
 
 //find particular seller product using email
 SellerRoute.get("/seller-product", async (req, res) => {
