@@ -63,11 +63,10 @@ SellerRoute.get("/all_Product", async (req, res) => {
   }
 });
 
-
 SellerRoute.get("/recent_Product", async (req, res) => {
   try {
     const data = await SellerProduct.find({})
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .limit(5)
       .lean();
     res.send(data);
@@ -78,7 +77,6 @@ SellerRoute.get("/recent_Product", async (req, res) => {
     });
   }
 });
-
 
 // get one id product
 SellerRoute.get("/all_Product/:id", async (req, res) => {
@@ -106,7 +104,6 @@ SellerRoute.delete("/delete-product", async (req, res) => {
   }
 });
 
-
 SellerRoute.delete("/delete-user", async (req, res) => {
   try {
     const deletedProduct = await User.findByIdAndDelete(req.query.id);
@@ -119,9 +116,6 @@ SellerRoute.delete("/delete-user", async (req, res) => {
     res.send({ error: "An error occurred while deleting the product" });
   }
 });
-
-
-
 
 //find particular seller product using email
 SellerRoute.get("/seller-product", async (req, res) => {
@@ -249,16 +243,6 @@ SellerRoute.get("/search", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error" });
-  }
-});
-
-SellerRoute.get("/filterByCategory", async (req, res) => {
-  try {
-    const { category } = req.query;
-    const filterCategory = await SellerProduct.find({ category: category });
-    res.send(filterCategory);
-  } catch (error) {
-    console.log(error.message);
   }
 });
 
