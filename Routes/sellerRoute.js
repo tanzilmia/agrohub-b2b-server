@@ -216,4 +216,14 @@ SellerRoute.get("/search", async (req, res) => {
   }
 });
 
+SellerRoute.get("/filterByCategory", async (req, res) => {
+  try {
+    const { category } = req.query;
+    const filterCategory = await SellerProduct.find({ category: category });
+    res.send(filterCategory);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
 module.exports = SellerRoute;
