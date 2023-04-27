@@ -69,7 +69,6 @@ PaymentRoute.post("/", async (req, res) => {
     sellerEmail:newPaymentData.sellerEmail
   };
 
-  console.log(data);
   const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
   sslcz.init(data).then((apiResponse) => {
     // Redirect the user to payment gateway
@@ -79,8 +78,6 @@ PaymentRoute.post("/", async (req, res) => {
     res.json({ url: GatewayPageURL });
   });
 });
-
-
 
 PaymentRoute.post("/payment/success", async (req, res) => {
   try {
