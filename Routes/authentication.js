@@ -56,7 +56,7 @@ Auth.post("/login", async (req, res) => {
     const { email, password } = userinfo;
     const validuser = await User.findOne({ email: email });
     const validPass = await bcrypt.compare(password, validuser.password);
-    if (validuser) {
+    if (validuser && validPass ) {
       if (validPass) {
         const token = jwt.sign(
           { email: validuser.email, _id:validuser._id },
@@ -70,7 +70,9 @@ Auth.post("/login", async (req, res) => {
     } else {
       res.send({ message: "user not Valid" });
     }
-  } catch (e) {}
+  } catch (e) {
+    res.send({message: "something is wrong"})
+  }
 });
 
 // get login user data
