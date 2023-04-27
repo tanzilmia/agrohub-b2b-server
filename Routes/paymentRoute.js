@@ -33,6 +33,37 @@ PaymentRoute.get("/", async (req, res) => {
   // console.log(Payment);
 });
 
+PaymentRoute.get("/totalsells", async (req, res) => {
+  try {
+    const totalsell = await Payment.find({});
+    const totalPrice = totalsell.reduce((acc, curr) => {
+      return acc + curr.price;
+    }, 0);
+    res.send({ totalSellPrice: totalPrice });
+  } catch (e) {
+    res.send({ message: e.message });
+  }
+});
+PaymentRoute.get("/best-selling-product", async (req, res) => {
+  try {
+    // give a arry whict "productName" field repeted more then 1 time , all data store in "Payment" cullection
+    const result = await Payment.aggregate([
+      { $group: { _id: "$productName", count: { $sum: 1 } } },
+      { $match: { count: { $gt: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 1 }
+    ]).exec();
+
+    const bestSellingProduct = result[0]._id;
+    res.send({ bestSellingProduct });
+
+  } catch (e) {
+    res.send({ message: e.message });
+  }
+});
+
+
+
 // post a product
 PaymentRoute.post("/", async (req, res) => {
   const newPaymentData = new Payment(req.body);
