@@ -106,18 +106,7 @@ PaymentRoute.put("/update/success", async (req, res) => {
       );
       res.send(getProduct);
     }
-    // const getQuantity = await SellerProduct.findOne({
-    //     _id: findProductByTransactionId?.productId,
-    //   });
-    //   if (getQuantity?.totalQuantity > 0) {
-    //     res.send({ message: "total quantity not goes to less 0" });
-    //   } else {
-    //     const updateQuantity = await SellerProduct.updateOne(
-    //       { _id: findProductByTransactionId?.productId },
-    //       { $inc: { totalQuantity: -1 } }
-    //     );
-    //     res.send(updateQuantity);
-    //   }
+
   } catch (error) {
     res.status(500).send({ error: "Value not update" });
   } 
