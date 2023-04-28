@@ -44,7 +44,7 @@ Auth.post("/register", async (req, res) => {
       res.status(200).send({ message: "success" });
     }
   } catch (e) {
-    res.send({ message: e.message });
+    res.send({ message: "unwanted error" });
   }
 });
 
