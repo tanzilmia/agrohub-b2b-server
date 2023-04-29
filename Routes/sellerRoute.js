@@ -63,6 +63,9 @@ SellerRoute.get("/all_Product", async (req, res) => {
   }
 });
 
+
+
+
 SellerRoute.get("/recent_Product", async (req, res) => {
   try {
     const data = await SellerProduct.find({})
