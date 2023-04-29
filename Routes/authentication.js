@@ -16,7 +16,7 @@ Auth.post("/google", async (req, res) => {
   try {
     const GoogleData = req.body;
     var decodedData = await jwt.decode(GoogleData.credential);
-    decodedData.role = "buyer";
+    // decodedData.role = "seller";
     const alreadyExist = await User.findOne({ email: decodedData.email });
     if (alreadyExist) {
       res.send({ message: "Email Is Already Used" });
@@ -24,7 +24,8 @@ Auth.post("/google", async (req, res) => {
       const user = new User({
         name: decodedData.name,
         email: decodedData.email,
-        role: decodedData?.role,
+        role: "buyer",
+        // role: decodedData?.role,
         phone: "xxxxxxxxx",
         profilePic: decodedData.picture,
       });
@@ -75,30 +76,33 @@ Auth.post("/google_login", async (req, res) => {
     } else {
       res.send({ message: "user not Valid" });
     }
-  } catch (e) {}
+  } catch (e) {
+    res
+    .status(200)
+    .send({ message: "Login Successful" });
+  }
 });
 // google login completed
 // login
 
 Auth.post("/login", async (req, res) => {
   try {
-    if (req.body?.credential) {
-      res
-        .status(200)
-        .send({ message: "Login Successful", data: req.body.credential });
-    }
+    // if (req.body?.credential) {
+    //   res
+    //     .status(200)
+    //     .send({ message: "Login Successful", data: req.body.credential });
+    // }
     const userinfo = req.body;
     const { email, password } = userinfo;
     const validuser = await User.findOne({ email: email });
     const validPass = await bcrypt.compare(password, validuser.password);
-    if (validuser && validPass ) {
+    if (validuser && validPass) {
       if (validPass) {
         const token = jwt.sign(
           { email: validuser.email, _id: validuser._id },
           `${process.env.JWT_SECRET}`,
           { expiresIn: "1d" }
         );
-        console.log(token);
         res.status(200).send({ message: "Login Successful", data: token });
       } else {
         res.send({ message: "password not Match" });
@@ -107,7 +111,7 @@ Auth.post("/login", async (req, res) => {
       res.send({ message: "user not Valid" });
     }
   } catch (e) {
-    res.send({message: "something is wrong"})
+    res.send({ message: "something is wrong" });
   }
 });
 
