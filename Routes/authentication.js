@@ -24,7 +24,7 @@ Auth.post("/google", async (req, res) => {
       const user = new User({
         name: decodedData.name,
         email: decodedData.email,
-        role: "seller",
+        role: "buyer",
         // role: decodedData?.role,
         phone: "xxxxxxxxx",
         profilePic: decodedData.picture,
