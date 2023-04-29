@@ -16,7 +16,7 @@ Auth.post("/google", async (req, res) => {
   try {
     const GoogleData = req.body;
     var decodedData = await jwt.decode(GoogleData.credential);
-    decodedData.role = "seller";
+    decodedData.role = "buyer";
     const alreadyExist = await User.findOne({ email: decodedData.email });
     if (alreadyExist) {
       res.send({ message: "Email Is Already Used" });
