@@ -77,9 +77,7 @@ Auth.post("/google_login", async (req, res) => {
       res.send({ message: "user not Valid" });
     }
   } catch (e) {
-    res
-    .status(200)
-    .send({ message: "Login Successful" });
+    res.status(200).send({ message: "Login Successful" });
   }
 });
 // google login completed
@@ -87,11 +85,11 @@ Auth.post("/google_login", async (req, res) => {
 
 Auth.post("/login", async (req, res) => {
   try {
-    // if (req.body?.credential) {
-    //   res
-    //     .status(200)
-    //     .send({ message: "Login Successful", data: req.body.credential });
-    // }
+    if (req.body?.credential) {
+      return res
+        .status(200)
+        .send({ message: "Login Successful", data: req.body?.credential });
+    }
     const userinfo = req.body;
     const { email, password } = userinfo;
     const validuser = await User.findOne({ email: email });
@@ -120,6 +118,14 @@ Auth.post("/login", async (req, res) => {
 Auth.post("/user-info", async (req, res) => {
   try {
     const { token } = req.body;
+    if (req.GoogleData?.credential) {
+      const userdata = await User.findOne({ email: userEmail });
+      if (userdata) {
+        res.status(200).send({ message: "successfull", data: userdata });
+      } else {
+        res.status(400).send({ message: "Not Valid User" });
+      }
+    }
     const user = jwt.verify(token, process.env.JWT_SECRET);
     const userEmail = user.email;
     const userdata = await User.findOne({ email: userEmail });
@@ -130,18 +136,22 @@ Auth.post("/user-info", async (req, res) => {
     }
   } catch (e) {}
 });
+
 // get login google user data
 Auth.post("/google-user-info", async (req, res) => {
   try {
-    const GoogleData = req.body;
-    var decodedData = await jwt.decode(GoogleData.credential);
-    const userdata = await User.findOne({ email: decodedData.email });
+    const { token } = req.body;
+    const user = jwt.decode(token);
+    const userEmail = user.email;
+    const userdata = await User.findOne({ email: userEmail });
     if (userdata) {
       res.status(200).send({ message: "successfull", data: userdata });
     } else {
       res.status(400).send({ message: "Not Valid User" });
     }
-  } catch (e) {}
+  } catch (e) {
+    res.status(400).send({ message: e.message });
+  }
 });
 
 // get seller data
