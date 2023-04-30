@@ -15,6 +15,8 @@ Commonroute.get("/", (req, res) => {
   res.send("Commonroute");
 });
 
+
+
 Commonroute.get("/sellers", async (req, res) => {
   try {
     const allSellers = await User.find({role:"seller"});
@@ -24,6 +26,15 @@ Commonroute.get("/sellers", async (req, res) => {
   }
 });
 
+Commonroute.get("/my-product", async(req,res)=>{
+  try{
+    const sellerEmail = req.query.email
+    const myproducts = await SellerProduct.find({sellerEmail: sellerEmail})
+    res.send(myproducts)
+  }catch(e){
+    res.send({message: e.message})
+  }
+})
 
 // single seller Info
 

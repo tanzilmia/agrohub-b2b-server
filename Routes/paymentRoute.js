@@ -44,6 +44,52 @@ PaymentRoute.get("/totalsells", async (req, res) => {
     res.send({ message: e.message });
   }
 });
+PaymentRoute.get("/total-mysells", async (req, res) => {
+  try {
+    const sellerEmail = req.query.email
+    const totalsell = await Payment.find({sellerEmail:sellerEmail});
+    const totalPrice = totalsell.reduce((acc, curr) => {
+      return acc + curr.price;
+    }, 0);
+    res.send({ totalSellPrice: totalPrice });
+  } catch (e) {
+    res.send({ message: e.message });
+  }
+});
+
+
+
+// api will be like http://localhost:5000/payment-gateway/my-buyers?email=tanzil@gamil.com
+PaymentRoute.get("/my-buyers", async (req, res) => {
+  try {
+    const sellerEmail = req.query.email;
+    const myBuyers = await Payment.find({ sellerEmail: sellerEmail });
+    const uniqueBuyers = Array.from(new Set(myBuyers.map(buyer => buyer.email)))
+      .map((email, index) => {
+        const buyerWithName = myBuyers.find(buyer => buyer.email === email);
+        return { id: index + 01457271, email: buyerWithName.email, name: buyerWithName.name };
+      });
+    res.send(uniqueBuyers);
+  } catch (e) {
+    res.send({ message: e.message });
+  }
+});
+
+
+PaymentRoute.get("/buyer-details", async (req, res) => {
+  try {
+    
+    const myBuyers = await Payment.find({ sellerEmail: sellerEmail });
+   
+  } catch (e) {
+    res.send({ message: e.message });
+  }
+});
+
+
+
+
+
 PaymentRoute.get("/best-selling-product", async (req, res) => {
   try {
     // give a arry whict "productName" field repeted more then 1 time , all data store in "Payment" cullection
