@@ -11,18 +11,33 @@ const User = new mongoose.model("User", userscema);
 
 Auth.use(express.json());
 
-// google auth data received
+// google auth data received register now
 Auth.post("/google", async (req, res) => {
   try {
     const GoogleData = req.body;
     var decodedData = await jwt.decode(GoogleData.credential);
-    console.log(decodedData.email);
+    // decodedData.role = "seller";
+    const alreadyExist = await User.findOne({ email: decodedData.email });
+    if (alreadyExist) {
+      res.send({ message: "Email Is Already Used" });
+    } else {
+      const user = new User({
+        name: decodedData.name,
+        email: decodedData.email,
+        role: "buyer",
+        // role: decodedData?.role,
+        phone: "xxxxxxxxx",
+        profilePic: decodedData.picture,
+      });
+      await user.save();
+      res.status(200).send({ message: "success" });
+    }
   } catch (error) {
     res.send({ message: error.message, success: false });
   }
 });
+// google register completed
 
-// google auth data end
 Auth.post("/register", async (req, res) => {
   try {
     const userinfos = req.body;
@@ -48,18 +63,41 @@ Auth.post("/register", async (req, res) => {
   }
 });
 
+// google Login
+Auth.post("/google_login", async (req, res) => {
+  try {
+    const GoogleData = req.body;
+    var decodedData = await jwt.decode(GoogleData.credential);
+    const validuser = await User.findOne({ email: decodedData.email });
+    if (validuser) {
+      res
+        .status(200)
+        .send({ message: "Login Successful", data: GoogleData.credential });
+    } else {
+      res.send({ message: "user not Valid" });
+    }
+  } catch (e) {
+    res.status(200).send({ message: "Login Successful" });
+  }
+});
+// google login completed
 // login
 
 Auth.post("/login", async (req, res) => {
   try {
+    if (req.body?.credential) {
+      return res
+        .status(200)
+        .send({ message: "Login Successful", data: req.body?.credential });
+    }
     const userinfo = req.body;
     const { email, password } = userinfo;
     const validuser = await User.findOne({ email: email });
     const validPass = await bcrypt.compare(password, validuser.password);
-    if (validuser && validPass ) {
+    if (validuser && validPass) {
       if (validPass) {
         const token = jwt.sign(
-          { email: validuser.email, _id:validuser._id },
+          { email: validuser.email, _id: validuser._id },
           `${process.env.JWT_SECRET}`,
           { expiresIn: "1d" }
         );
@@ -71,7 +109,7 @@ Auth.post("/login", async (req, res) => {
       res.send({ message: "user not Valid" });
     }
   } catch (e) {
-    res.send({message: "something is wrong"})
+    res.send({ message: "something is wrong" });
   }
 });
 
@@ -80,6 +118,14 @@ Auth.post("/login", async (req, res) => {
 Auth.post("/user-info", async (req, res) => {
   try {
     const { token } = req.body;
+    if (req.GoogleData?.credential) {
+      const userdata = await User.findOne({ email: userEmail });
+      if (userdata) {
+        res.status(200).send({ message: "successfull", data: userdata });
+      } else {
+        res.status(400).send({ message: "Not Valid User" });
+      }
+    }
     const user = jwt.verify(token, process.env.JWT_SECRET);
     const userEmail = user.email;
     const userdata = await User.findOne({ email: userEmail });
@@ -89,6 +135,23 @@ Auth.post("/user-info", async (req, res) => {
       res.status(400).send({ message: "Not Valid User" });
     }
   } catch (e) {}
+});
+
+// get login google user data
+Auth.post("/google-user-info", async (req, res) => {
+  try {
+    const { token } = req.body;
+    const user = jwt.decode(token);
+    const userEmail = user.email;
+    const userdata = await User.findOne({ email: userEmail });
+    if (userdata) {
+      res.status(200).send({ message: "successfull", data: userdata });
+    } else {
+      res.status(400).send({ message: "Not Valid User" });
+    }
+  } catch (e) {
+    res.status(400).send({ message: e.message });
+  }
 });
 
 // get seller data
