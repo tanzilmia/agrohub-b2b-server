@@ -11,9 +11,6 @@ const User = new mongoose.model("User", userscema);
 
 Auth.use(express.json());
 
-
-
-
 Auth.post("/register", async (req, res) => {
   try {
     const userinfos = req.body;
