@@ -11,32 +11,8 @@ const User = new mongoose.model("User", userscema);
 
 Auth.use(express.json());
 
-// google auth data received register now
-Auth.post("/google", async (req, res) => {
-  try {
-    const GoogleData = req.body;
-    var decodedData = await jwt.decode(GoogleData.credential);
-    // decodedData.role = "seller";
-    const alreadyExist = await User.findOne({ email: decodedData.email });
-    if (alreadyExist) {
-      res.send({ message: "Email Is Already Used" });
-    } else {
-      const user = new User({
-        name: decodedData.name,
-        email: decodedData.email,
-        role: "buyer",
-        // role: decodedData?.role,
-        phone: "xxxxxxxxx",
-        profilePic: decodedData.picture,
-      });
-      await user.save();
-      res.status(200).send({ message: "success" });
-    }
-  } catch (error) {
-    res.send({ message: error.message, success: false });
-  }
-});
-// google register completed
+
+
 
 Auth.post("/register", async (req, res) => {
   try {
@@ -63,25 +39,6 @@ Auth.post("/register", async (req, res) => {
   }
 });
 
-// google Login
-Auth.post("/google_login", async (req, res) => {
-  try {
-    const GoogleData = req.body;
-    var decodedData = await jwt.decode(GoogleData.credential);
-    const validuser = await User.findOne({ email: decodedData.email });
-    if (validuser) {
-      res
-        .status(200)
-        .send({ message: "Login Successful", data: GoogleData.credential });
-    } else {
-      res.send({ message: "user not Valid" });
-    }
-  } catch (e) {
-    res.status(200).send({ message: "Login Successful" });
-  }
-});
-// google login completed
-// login
 
 Auth.post("/login", async (req, res) => {
   try {
@@ -135,23 +92,6 @@ Auth.post("/user-info", async (req, res) => {
       res.status(400).send({ message: "Not Valid User" });
     }
   } catch (e) {}
-});
-
-// get login google user data
-Auth.post("/google-user-info", async (req, res) => {
-  try {
-    const { token } = req.body;
-    const user = jwt.decode(token);
-    const userEmail = user.email;
-    const userdata = await User.findOne({ email: userEmail });
-    if (userdata) {
-      res.status(200).send({ message: "successfull", data: userdata });
-    } else {
-      res.status(400).send({ message: "Not Valid User" });
-    }
-  } catch (e) {
-    res.status(400).send({ message: e.message });
-  }
 });
 
 // get seller data
