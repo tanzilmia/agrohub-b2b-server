@@ -42,16 +42,21 @@ app.use("/products", product);
 app.use("/chat", chatRoute);
 app.use("/review", review);
 app.use("/CartProduct", CartProduct );
+
+app.get("/", (req,res)=>{
+  res.send("Agrohub server is running")
+})
+
 const server = app.listen(port, () => {
   console.log(`Website on port ${port}`);
 });
 
-const io = require("socket.io")(server, { 
-  pingTimeout: 60000,
-  cors: {
-    origin: "https://agrohubb2b.netlify.app",
-  },
-});
+  const io = require("socket.io")(server, { 
+    pingTimeout: 60000,
+    cors: {
+      origin: "https://agrohubb2b.netlify.app",
+    },
+  });
 
 io.on("connection", (socket) => {
   console.log("connected to socket.io");
