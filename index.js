@@ -55,6 +55,7 @@ const server = app.listen(port, () => {
     pingTimeout: 60000,
     cors: {
       origin: "https://agrohubb2b.netlify.app",
+      methods: ["GET", "POST"]
     },
   });
 
