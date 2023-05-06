@@ -12,18 +12,6 @@ const chatRoute = require("./Routes/chatRoute");
 const review = require("./Routes/reviewRoute");
 require("dotenv").config();
 
-
-const corsOptions = {
-  origin: 'https://agrohubb2b.netlify.app',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['my-custom-header'],
-  credentials: true,
-};
-
-app.use(cors());
-app.use(cors(corsOptions));
-
-
 // middleware
 app.use(cors());
 app.use(express.json());
@@ -60,9 +48,9 @@ const server = app.listen(port, () => {
 
 const io = require("socket.io")(server, { 
   pingTimeout: 60000,
-  cors:{
-    origin: 'https://agrohubb2b.netlify.app',
-  }
+  cors: {
+    origin: "https://agrohubb2b.netlify.app",
+  },
 });
 
 io.on("connection", (socket) => {

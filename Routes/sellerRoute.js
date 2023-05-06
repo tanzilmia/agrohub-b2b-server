@@ -9,6 +9,7 @@ const SellerProduct = new mongoose.model("SellerProduct", product);
 const Payment = new mongoose.model("Payment", paymentData);
 const userscema = require("../Scema/users");
 const User = new mongoose.model("User", userscema);
+const Blog = require("../Scema/blogScema")
 
 SellerRoute.use(express.json());
 const verifyToken = async (req, res, next) => {
@@ -248,5 +249,52 @@ SellerRoute.get("/search", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+SellerRoute.post("/add-blog", async (req, res) => {
+  try {
+    const blogInfo = req.body;
+    const alreadyExists = await Blog.findOne({blogTitle:blogInfo.blogTitle})
+    if(alreadyExists){
+      return res.send({message:"Post Is Already Exist"})
+    }else{
+      const newBlog = new Blog(blogInfo);
+      const savedBlog = await newBlog.save();
+      res.send({message: "Save Success"});
+    }
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'server error' });
+  }
+});
+
+SellerRoute.get("/all-blogs", async(req,res)=>{
+  try{
+    const allBlog = await Blog.find({}).sort({ date: -1 });
+    res.send(allBlog);
+  }catch(e){
+    res.send({message:"server error"})
+  }
+})
+SellerRoute.get("/letest-blogs", async(req,res)=>{
+  try{
+    const latestBlogs = await Blog.aggregate([ { $sample: { size: 3 } } ]).sort({ date: -1 });
+    res.send(latestBlogs);
+  }catch(e){
+    res.send({message:"server error"})
+  }
+})
+
+
+SellerRoute.get("/single-blog/:id", async(req,res)=>{
+  try{
+  const singleblog = await Blog.findOne({_id: req.params.id})
+  console.log(singleblog);
+  res.send(singleblog)
+  }catch(e){
+    res.send({message:"server error"})
+  }
+})
+
 
 module.exports = SellerRoute;
