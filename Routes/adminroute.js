@@ -7,9 +7,12 @@ const { default: mongoose } = require("mongoose");
 const User = new mongoose.model("User", userscema);
 const CategorysScema = require("../Scema/allCategory");
 const BrandsScema = require("../Scema/allBrand");
+
 // Makeing Model
 const Category = new mongoose.model("Categorys", CategorysScema);
 const Brand = new mongoose.model("Brands", BrandsScema);
+const Doctor = require("../Scema/doctorScema")
+const Officer = require("../Scema/officerScema")
 
 AdminRoute.use(express.json());
 
@@ -95,6 +98,7 @@ AdminRoute.post("/categories", verifyToken, async (req, res) => {
   }
 });
 
+
 AdminRoute.get("/categories", async (req, res) => {
   try {
     const categorys = await Category.find();
@@ -103,6 +107,76 @@ AdminRoute.get("/categories", async (req, res) => {
     res.send({ message: e.message });
   }
 });
+
+AdminRoute.post("/add-doctor", async (req, res) => {
+  try {
+    const doctorinfo = req.body; // Extract the "category" value from the request body
+
+    const alreadyExist = await Doctor.findOne({
+      doctorName: doctorinfo.doctorName,
+      doctorEmail: doctorinfo.doctorEmail,
+    });
+
+    // Check if the category already exists in the database
+    console.log(alreadyExist);
+
+    if (alreadyExist) {
+      res.send({ message: "Failed"}); // Respond with error message if category already exists
+    } else {
+      const newDoctor = new Doctor(doctorinfo); // Create a new category instance
+
+      await newDoctor.save(); // Save the new category to the database
+
+      res.send({ message: "Success", data: newDoctor });
+    }
+
+    // Respond with success message and the created category data
+  } catch (err) {
+    console.error(err); // Log any unexpected errors
+    res.send({ message: "server error" }); // Respond with a generic error message for internal server errors
+  }
+});
+AdminRoute.post("/add-officer", async (req, res) => {
+  try {
+    const officerInfo = req.body; // Extract the "category" value from the request body
+
+    const alreadyExist = await Officer.findOne({
+      officerName: officerInfo.officerName,
+      officerEmail: officerInfo.officerEmail,
+    });
+
+    // Check if the category already exists in the database
+    console.log(alreadyExist);
+
+    if (alreadyExist) {
+      res.send({ message: "Failed"}); // Respond with error message if category already exists
+    } else {
+      const newDoctor = new Officer(officerInfo); // Create a new category instance
+
+      await newDoctor.save(); // Save the new category to the database
+
+      res.send({ message: "Success", data: newDoctor });
+    }
+
+    // Respond with success message and the created category data
+  } catch (err) {
+    console.error(err); // Log any unexpected errors
+    res.send({ message: "server error" }); // Respond with a generic error message for internal server errors
+  }
+});
+
+
+
+
+AdminRoute.get("/doctors", async (req, res) => {
+  try {
+    const doctors = await Doctor.find();
+    res.send(doctors);
+  } catch (e) {
+    res.send({ message: e.message });
+  }
+});
+
 
 // test route
 AdminRoute.get("/", (req, res) => {
