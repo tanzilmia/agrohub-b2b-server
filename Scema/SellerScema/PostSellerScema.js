@@ -75,6 +75,12 @@ const postSellerScema = mongoose.Schema({
     type: String,
     required: [true, "please Enter Product Brand"],
   },
+  date: {
+    type: String,
+    required: [true, "please Enter Product Brand"],
+  },
+  
+
 });
 
 module.exports = postSellerScema;
