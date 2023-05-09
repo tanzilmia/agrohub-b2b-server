@@ -177,6 +177,15 @@ AdminRoute.get("/doctors", async (req, res) => {
   }
 });
 
+AdminRoute.get("/officers", async (req, res) => {
+  try {
+    const officers = await Officer.find();
+    res.send(officers);
+  } catch (e) {
+    res.send({ message: e.message });
+  }
+});
+
 
 // test route
 AdminRoute.get("/", (req, res) => {
